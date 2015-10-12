@@ -57,7 +57,7 @@ def is_feature_enabled():
     return hasattr(settings, 'FEATURES') and settings.FEATURES.get('ENABLE_PROCTORED_EXAMS', False)
 
 
-def create_exam(course_id, content_id, exam_name, time_limit_mins,
+def create_exam(course_id, content_id, exam_name, time_limit_mins, due_date=None,
                 is_proctored=True, is_practice_exam=False, external_id=None, is_active=True):
     """
     Creates a new ProctoredExam entity, if the course_id/content_id pair do not already exist.
@@ -75,6 +75,7 @@ def create_exam(course_id, content_id, exam_name, time_limit_mins,
         external_id=external_id,
         exam_name=exam_name,
         time_limit_mins=time_limit_mins,
+        due_date = due_date,
         is_proctored=is_proctored,
         is_practice_exam=is_practice_exam,
         is_active=is_active
@@ -97,7 +98,7 @@ def create_exam(course_id, content_id, exam_name, time_limit_mins,
     return proctored_exam.id
 
 
-def update_exam(exam_id, exam_name=None, time_limit_mins=None,
+def update_exam(exam_id, exam_name=None, time_limit_mins=None, due_date=None,
                 is_proctored=None, is_practice_exam=None, external_id=None, is_active=None):
     """
     Given a Django ORM id, update the existing record, otherwise raise exception if not found.
@@ -108,11 +109,11 @@ def update_exam(exam_id, exam_name=None, time_limit_mins=None,
 
     log_msg = (
         u'Updating exam_id {exam_id} with parameters '
-        u'exam_name={exam_name}, time_limit_mins={time_limit_mins}, '
+        u'exam_name={exam_name}, time_limit_mins={time_limit_mins}, due_date={due_date}'
         u'is_proctored={is_proctored}, is_practice_exam={is_practice_exam}, '
         u'external_id={external_id}, is_active={is_active}'.format(
             exam_id=exam_id, exam_name=exam_name, time_limit_mins=time_limit_mins,
-            is_proctored=is_proctored, is_practice_exam=is_practice_exam,
+            due_date=due_date, is_proctored=is_proctored, is_practice_exam=is_practice_exam,
             external_id=external_id, is_active=is_active
         )
     )
@@ -126,6 +127,8 @@ def update_exam(exam_id, exam_name=None, time_limit_mins=None,
         proctored_exam.exam_name = exam_name
     if time_limit_mins is not None:
         proctored_exam.time_limit_mins = time_limit_mins
+    if due_date is not None:
+        proctored_exam.due_date = due_date
     if is_proctored is not None:
         proctored_exam.is_proctored = is_proctored
     if is_practice_exam is not None:
