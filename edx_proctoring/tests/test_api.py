@@ -305,7 +305,8 @@ class ProctoredExamApiTests(LoggedInTestCase):
         """
         updated_proctored_exam_id = update_exam(
             self.proctored_exam_id, exam_name='Updated Exam Name', time_limit_mins=30,
-            is_proctored=True, external_id='external_id', is_active=True
+            is_proctored=True, external_id='external_id', is_active=True,
+            due_date=datetime.now(pytz.UTC)
         )
 
         # only those fields were updated, whose
