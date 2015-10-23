@@ -23,7 +23,6 @@ from edx_proctoring.api import (
 from edx_proctoring.exceptions import ProctoredBaseException
 
 from edx_proctoring.backends import get_backend_provider
-from edx_proctoring.utils import locate_attempt_by_attempt_code
 
 log = logging.getLogger(__name__)
 
@@ -51,7 +50,7 @@ def start_exam_callback(request, attempt_code):  # pylint: disable=unused-argume
 
     mark_exam_attempt_as_ready(attempt['proctored_exam']['id'], attempt['user']['id'])
 
-    template = loader.get_template('proctored_exam/proctoring_launch_callback.html')
+    template = loader.get_template('proctoring/proctoring_launch_callback.html')
 
     poll_url = reverse(
         'edx_proctoring.anonymous.proctoring_poll_status',
@@ -105,22 +104,7 @@ class ExamReviewCallback(APIView):
         """
         Post callback handler
         """
-        try:
-            attempt_code = request.DATA['examMetaData']['examCode']
-        except KeyError, ex:
-            log.exception(ex)
-            return Response(
-                data={
-                    'reason': unicode(ex)
-                },
-                status=400
-            )
-        attempt_obj = locate_attempt_by_attempt_code(attempt_code)
-        course_id = attempt_obj.proctored_exam.course_id
-        # TODO: find how to get course by course_id
-        # TODO: find how to get settings from course
-        provider_name = '' # course.settings.proctor_provider?
-        provider = get_backend_provider(provider_name)
+        provider = get_backend_provider()
 
         # call down into the underlying provider code
         try:

@@ -110,10 +110,9 @@ class ProctoredExamSoftwareSecureReviewAdmin(admin.ModelAdmin):
     """
 
     readonly_fields = [video_url_for_review, 'attempt_code', 'exam', 'student', 'reviewed_by', 'modified']
-    list_filter = [ReviewListFilter, 'review_status', 'exam__course_id', 'exam__exam_name']
+    list_filter = ['review_status', 'exam__course_id', 'exam__exam_name', ReviewListFilter]
     list_select_related = True
     search_fields = ['student__username', 'attempt_code']
-    ordering = ['-modified']
     form = ProctoredExamSoftwareSecureReviewForm
 
     def _get_exam_from_attempt_code(self, code):
@@ -171,11 +170,7 @@ class ProctoredExamSoftwareSecureReviewAdmin(admin.ModelAdmin):
         review.save()
         # call the review saved and since it's coming from
         # the Django admin will we accept failures
-        course_id = review.exam.course_id
-        # TODO: find how to get course by course_id
-        # TODO: find how to get settings from course
-        provider_name = '' # course.settings.proctor_provider?
-        get_backend_provider(provider_name).on_review_saved(review, allow_status_update_on_fail=True)
+        get_backend_provider().on_review_saved(review, allow_status_update_on_fail=True)
 
     def get_form(self, request, obj=None, **kwargs):
         form = super(ProctoredExamSoftwareSecureReviewAdmin, self).get_form(request, obj, **kwargs)

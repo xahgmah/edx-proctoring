@@ -34,11 +34,11 @@ def load_requirements(*requirements_paths):
 
 setup(
     name='edx-proctoring',
-    version='0.10.9',
+    version='0.9.16',
     description='Proctoring subsystem for Open edX',
     long_description=open('README.md').read(),
     author='edX',
-    url='https://github.com/xahgmah/edx-proctoring',
+    url='https://github.com/edx/edx-proctoring',
     license='AGPL',
     classifiers=[
         'Development Status :: 3 - Alpha',
