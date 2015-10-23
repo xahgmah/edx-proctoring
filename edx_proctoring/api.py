@@ -46,6 +46,9 @@ from edx_proctoring.utils import (
 from edx_proctoring.backends import get_backend_provider
 from edx_proctoring.runtime import get_runtime_service
 
+from xmodule.modulestore.django import modulestore
+
+
 log = logging.getLogger(__name__)
 
 
@@ -464,6 +467,10 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
         # now call into the backend provider to register exam attempt
 
         course_id = exam.course_id
+        course = modulestore().get_course(course_id)
+        print "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+        print course.proctoring_service
+        return False
         # TODO: find how to get course by course_id
         # TODO: find how to get settings from course
         provider_name = '' # course.settings.proctor_provider?
