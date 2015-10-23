@@ -1168,7 +1168,11 @@ def get_student_view(user_id, course_id, content_id,
             student_view_template = 'proctoring/seq_timed_exam_entrance.html'
 
     elif attempt['status'] == ProctoredExamStudentAttemptStatus.created:
-        provider = get_backend_provider()
+        course_id = exam['course_id']
+        course_key = CourseKey.from_string(course_id)
+        course = modulestore().get_course(course_key)
+        provider_name = course.proctoring_service
+        provider = get_backend_provider(provider_name)
         student_view_template = 'proctoring/seq_proctored_exam_instructions.html'
         context.update({
             'exam_code': attempt['attempt_code'],
