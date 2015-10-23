@@ -24,6 +24,9 @@ from edx_proctoring.exceptions import ProctoredBaseException
 
 from edx_proctoring.backends import get_backend_provider
 
+from xmodule.modulestore.django import modulestore
+from opaque_keys.edx.keys import CourseKey
+
 log = logging.getLogger(__name__)
 
 
@@ -115,10 +118,10 @@ class ExamReviewCallback(APIView):
                 status=400
             )
         attempt_obj = locate_attempt_by_attempt_code(attempt_code)
-        course_id = attempt_obj.proctored_exam.course_id
-        # TODO: find how to get course by course_id
-        # TODO: find how to get settings from course
-        provider_name = '' # course.settings.proctor_provider?
+        course_id = attempt_obj.proctored_exam['course_id']
+        course_key = CourseKey.from_string(course_id)
+        course = modulestore().get_course(course_key)
+        provider_name = course.proctoring_service
         provider = get_backend_provider(provider_name)
 
         # call down into the underlying provider code
