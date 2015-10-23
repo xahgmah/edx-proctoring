@@ -43,6 +43,9 @@ from edx_proctoring.utils import humanized_time
 from edx_proctoring.backends import get_backend_provider
 from edx_proctoring.runtime import get_runtime_service
 
+from xmodule.modulestore.django import modulestore
+
+
 log = logging.getLogger(__name__)
 
 
@@ -400,7 +403,10 @@ def create_exam_attempt(exam_id, user_id, taking_as_proctored=False):
             })
 
         # now call into the backend provider to register exam attempt
-        external_id = get_backend_provider().register_exam_attempt(
+        course_id = exam.course_id
+        course = modulestore().get_course(course_id)
+        provider_name = course.proctoring_service
+        external_id = get_backend_provider(provider_name).register_exam_attempt(
             exam,
             context=context,
         )

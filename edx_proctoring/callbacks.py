@@ -104,7 +104,22 @@ class ExamReviewCallback(APIView):
         """
         Post callback handler
         """
-        provider = get_backend_provider()
+        try:
+            attempt_code = request.DATA['examMetaData']['examCode']
+        except KeyError, ex:
+            log.exception(ex)
+            return Response(
+                data={
+                    'reason': unicode(ex)
+                },
+                status=400
+            )
+        attempt_obj = locate_attempt_by_attempt_code(attempt_code)
+        course_id = attempt_obj.proctored_exam.course_id
+        # TODO: find how to get course by course_id
+        # TODO: find how to get settings from course
+        provider_name = '' # course.settings.proctor_provider?
+        provider = get_backend_provider(provider_name)
 
         # call down into the underlying provider code
         try:
